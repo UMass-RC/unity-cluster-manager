@@ -1,0 +1,1 @@
+In this folder Unity Cluster Manager will have all secured provisioning files, such as munge.key. This directory should be secured.

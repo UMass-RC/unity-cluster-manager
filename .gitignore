@@ -1,0 +1,2 @@
+secure_assets/*
+!secure_assets/README.md

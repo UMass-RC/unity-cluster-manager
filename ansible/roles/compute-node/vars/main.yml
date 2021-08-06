@@ -1,0 +1,5 @@
+---
+slurm_package_version: slurm-20-02
+mount_device_home: vast:/home
+mount_device_scratch: vast:/scratch
+mount_device_modules: vast:/modules

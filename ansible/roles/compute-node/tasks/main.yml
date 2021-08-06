@@ -1,0 +1,110 @@
+- hosts: os_Ubuntu
+  tasks:
+    # NFS mounts
+    - name: Install NFS
+      apt:
+        name: nfs-common
+        state: present
+
+    - name: Mount /home
+      mount:
+        path: /home
+        src: '{{ mount_device_home }}'
+        fstype: nfs
+        state: present
+    - name: Mount /modules
+      mount:
+        path: /modules
+        src: '{{ mount_device_modules }}'
+        fstype: nfs
+        state: present
+    - name: Mount cee-water-nas
+      mount:
+        path: /nas/cee-water
+        src: "cee-water-nas:/exports/cee-water"
+        fstype: nfs
+        state: present
+    - name: Mount astro-th-nas
+      mount:
+        path: /nas/astro-th
+        src: "astro-th-nas:/exports/astro-th/proj"
+        fstype: nfs
+        state: present
+    - name: Mount cee-water-backup NESE
+      mount:
+        path: /nese/cee-water
+        src: "nfs-gw:/exports/cee-water-backup"
+        fstype: nfs
+        state: present
+    - name: Mount ch2p NESE
+      mount:
+        path: /nese/ch2p
+        src: "nfs-gw:/exports/ch2p"
+        fstype: nfs
+        state: present
+
+    # Slurm installation
+    - name: Install Slurm
+      apt:
+        name: '{{ slurm_package_version }}'
+        state: present
+    - name: Install Munge
+      apt:
+        name: munge
+        state: present
+
+    - name: Copy munge.key
+      copy:
+        src: munge.key
+        dest: /etc/munge/munge.key
+        owner: munge
+        group: munge
+        mode: '0400'
+
+    - name: Enable slurmd
+      systemd:
+        name: slurmd
+        enabled: yes
+    - name: Disable slurmctld
+      systemd:
+        name: slurmctld
+        enabled: no
+    - name: Disable slurmdbd
+      systemd:
+        name: slurmdbd
+        enabled: no
+    - name: Disable slurmrestd
+      systemd:
+        name: slurmrestd
+        enabled: no
+
+    # Environment Modules
+    - name: Install Environment Modules (lmod)
+      apt:
+        name: lmod
+        state: present
+    - name: Add modulepath
+      lineinfile:
+        path: /etc/profile.d/zzz_lmod_modulepath.sh
+        line: 'export MODULEPATH="/modules/modulefiles"'
+        insertbefore: BOF
+        create: yes
+
+    # enable ptrace support
+    - name: Enable PTrace
+      lineinfile:
+        path: /etc/sysctl.d/10-ptrace.conf
+        regexp: "^kernel.yama.ptrace_scope"
+        line: kernel.yama.ptrace_scope = 0
+
+    # Enable memory cgroup support
+    - name: Add kernel parameter
+      lineinfile:
+        path: "/etc/default/grub"
+        regexp: '^GRUB_CMDLINE_LINUX='
+        line: GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"
+        state: present
+
+    - name: Update grub
+      command: update-grub
+    # REBOOT
