@@ -1,0 +1,7 @@
+---
+- name: Gather OS information
+  hosts: all
+  tasks:
+    - name: Get OS distribution
+      group_by:
+        key: os_{{ ansible_facts['distribution'] }}

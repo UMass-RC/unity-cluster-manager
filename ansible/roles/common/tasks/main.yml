@@ -1,0 +1,50 @@
+---
+# Disable motd scripts
+- hosts: os_Ubuntu
+  tasks:
+    - name: Delete MOTD
+      file:
+        path: /etc/update-motd.d
+        state: absent
+    - name: Remove unattended upgrades
+      apt:
+        name: unattended-upgrades
+        state: absent
+
+    # SSH Server
+    - name: Set allowed groups for SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "AllowGroups"
+        line: AllowGroups sudo root
+    - name: Disable password auth
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "PasswordAuthentication"
+        line: PasswordAuthentication no
+    - name: Enable key authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "PubkeyAuthentication"
+        line: PubkeyAuthentication yes
+    - name: Enable root login for SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "PermitRootLogin"
+        line: PermitRootLogin yes
+    - name: Enable X11
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "X11Forwarding"
+        line: X11Forwarding yes
+    - name: Disable MOTD
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "PrintMotd"
+        line: PrintMotd no
+    - name: Disable last login
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "PrintLastLog"
+        line: PrintLastLog no
+    # sshd must be restarted, but this playbook assumes a system restart (curtin maas)
