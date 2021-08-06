@@ -42,4 +42,3 @@
         path: /etc/ssh/sshd_config
         regexp: "PrintLastLog"
         line: PrintLastLog no
-    # sshd must be restarted, but this playbook assumes a system restart (curtin maas)

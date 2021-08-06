@@ -1,0 +1,9 @@
+---
+- hosts: os_Ubuntu
+  tasks:
+    - name: Intall default packages
+      apt:
+        pkg: {{ ubuntu_compute_packages }}
+        state: present
+        update_cache: yes
+        install_recommends: no
