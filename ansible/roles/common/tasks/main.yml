@@ -42,3 +42,4 @@
         path: /etc/ssh/sshd_config
         regexp: "PrintLastLog"
         line: PrintLastLog no
+    # Restart SSHD

@@ -1,0 +1,62 @@
+---
+- hosts: os_Ubuntu
+  tasks:
+    - name: Install LDAP Client
+      apt:
+        name: libpam-ldapd
+        state: present
+
+    - name: Set Base DN
+      lineinfile:
+        path: /etc/ldap/ldap.conf
+        regexp: "BASE"
+        line: "BASE {{ ldap_basedn }}"
+    - name: Set URI in /etc/ldap/ldap.conf
+      lineinfile:
+        path: /etc/ldap/ldap.conf
+        regexp: "URI"
+        line: "URI {{ ldap_uri }}"
+    - name: Set URI in /etc/nslcd.conf
+      lineinfile:
+        path: /etc/nslcd.conf
+        regexp: "uri"
+        line: "uri {{ ldap_uri }}"
+    - name: Set URI in /etc/nslcd.conf
+      lineinfile:
+        path: /etc/nslcd.conf
+        regexp: "base"
+        line: "base {{ ldap_basedn }}"
+    - name: Set NSSwitch passwd
+      lineinfile:
+        path: /etc/nsswitch.conf
+        regexp: "^passwd"
+        line: "passwd: files systemd ldap"
+    - name: Set NSSwitch group
+      lineinfile:
+        path: /etc/nsswitch.conf
+        regexp: "^group"
+        line: "group: files systemd ldap"
+    - name: Set NSSwitch shadow
+      lineinfile:
+        path: /etc/nsswitch.conf
+        regexp: "^shadow"
+        line: "shadow: files ldap"
+    # Restart NSCD, NSLCD
+
+    # Update SSH with LDAP key auth
+    - name: Create LDAP script
+      copy:
+        src: ldap_auth
+        dest: /etc/ssh/ldap_auth
+        mode: "0755"
+    - name: Add authorized key command for SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "AuthorizedKeysCommand "
+        line: AuthorizedKeysCommand /etc/ssh/ldap_auth
+    - name: Add authorized key user
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "AuthorizedKeysCommandUser"
+        line: AuthorizedKeysCommandUser nobody
+    # Restart SSHD

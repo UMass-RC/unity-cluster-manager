@@ -1,0 +1,3 @@
+---
+ldap_uri: ldap://identity
+ldap_basedn: dc=unity,dc=rc,dc=umass,dc=edu
