@@ -27,11 +27,6 @@
         path: /etc/ssh/sshd_config
         regexp: "PubkeyAuthentication"
         line: PubkeyAuthentication yes
-    - name: Enable root login for SSH
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        regexp: "PermitRootLogin"
-        line: PermitRootLogin yes
     - name: Enable X11
       lineinfile:
         path: /etc/ssh/sshd_config
