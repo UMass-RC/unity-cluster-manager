@@ -1,0 +1,6 @@
+- hosts: os_Ubuntu
+  tasks:
+    # install apache
+    # install shibd (add ppa), with setup
+    # create directories
+    # install vhost files / enable modules for apache

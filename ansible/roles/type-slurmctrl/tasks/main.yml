@@ -1,0 +1,19 @@
+- hosts: os_Ubuntu
+  tasks:
+    # Slurm configuration
+    - name: Enable slurmd
+      systemd:
+        name: slurmd
+        enabled: no
+    - name: Disable slurmctld
+      systemd:
+        name: slurmctld
+        enabled: yes
+    - name: Disable slurmdbd
+      systemd:
+        name: slurmdbd
+        enabled: no
+    - name: Disable slurmrestd
+      systemd:
+        name: slurmrestd
+        enabled: no

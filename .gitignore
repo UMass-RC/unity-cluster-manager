@@ -1,2 +1,5 @@
 secure_assets/*
 !secure_assets/README.md
+
+# munge.key should never be shared
+munge.key
